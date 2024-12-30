@@ -1,11 +1,35 @@
 //index.js
 
-const rightPoints = [];
-const leftPoints = [];
+
+
 
 function findIntersection(line1, line2) {
 	const [x1, y1, x2, y2] = line1;
 	const [x3, y3, x4, y4] = line2;
+    const isLine1Vertical = (x1 === x2);
+    const isLine2Vertical = (x3 === x4);
+    const isLine1Horizontal = (y1 === y2);
+    const isLine2Horizontal = (y3 === y4);
+    if((isLine1Vertical && isLine2Vertical) ||
+    	(isLine1Horizontal && isLine2Horizontal)) {
+    	return { x: x3, y: y3};
+    }
+    if(isLine1Vertical) {
+    	const intersectY = ((y4 - y3) / (x4 - x3)) * (x1 - x3) + y3;
+    	return { x: x2, y: intersectY };
+    }
+    if (isLine2Vertical) {
+        const intersectY = ((y2 - y1) / (x2 - x1)) * (x3 - x1) + y1; 
+        return { x: x3, y: intersectY };
+    }
+    if (isLine1Horizontal) {
+    	const intersectX  = x3 + ((y1-y3) / ((y4 - y3) / (x4 - x3)));
+    	return { x: intersectX, y: y2 };
+    }
+    if (isLine2Horizontal) {
+    	const intersectX  = x1 + ((y1-y3) / ((y2 - y1) / (x2 - x1)));
+    	return { x: intersectX, y: y2 };
+    }
 	const denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 	if (denominator === 0) { 
 	// The lines are parallel or coincident 
@@ -27,7 +51,7 @@ function checkPointPositionDirected(x1, y1, x2, y2, px, py) {
     }
 }
 
-function parallels(p1, p2, offset) {
+function parallels(p1, p2, offset, leftPoints, rightPoints) {
 	const x1 = p1.x;
 	const y1 = p1.y;
 	const x2 = p2.x;
@@ -57,35 +81,23 @@ function parallels(p1, p2, offset) {
 		leftTo.x = x2;
 		leftTo.y = y2 - offset;
 	} else { // Diagonal line
-		// Calculate the slope
-		const dx = p2.x - p1.x;
-		const dy = p2.y - p1.y;
-
-		// Calculate the angle of the line
-		const angle = Math.atan2(dy, dx);
-
-		// Calculate the parallel line points
-		const parallelX1 = x1 + offset * Math.sin(angle + Math.PI / 2);
-		const parallelY1 = y1 - offset * Math.cos(angle + Math.PI / 2);
-		const parallelX2 = x2 + offset * Math.sin(angle + Math.PI / 2);
-		const parallelY2 = y2 - offset * Math.cos(angle + Math.PI / 2);
-
-		const parallelX3 = x1 - offset * Math.sin(angle + Math.PI / 2);
-		const parallelY3 = y1 + offset * Math.cos(angle + Math.PI / 2);
-		const parallelX4 = x2 - offset * Math.sin(angle + Math.PI / 2);
-		const parallelY4 = y2 + offset * Math.cos(angle + Math.PI / 2);
-
-		// Draw the parallel lines
-		rightFrom.x = parallelX1;
-		rightFrom.y = parallelY1;
-		rightTo.x = parallelX2;
-		rightTo.y = parallelY2;
-		leftFrom.x = parallelX3;
-		leftFrom.y = parallelY3;
-		leftTo.x = parallelX4;
-		leftTo.y = parallelY4;
+		const dx = x2 - x1;
+		const dy = y2 - y1;
+		const length = Math.sqrt( dx * dx + dy * dy );
+		const unitX = dx / length;
+		const unitY = dy / length;
+		const perpX = -unitY * offset;
+		const perpY = unitX * offset;
+		rightFrom.x = x1 + perpX;
+		rightFrom.y = y1 + perpY;
+		rightTo.x = x2 + perpX;
+		rightTo.y = y2 + perpY;
+		leftFrom.x = x1 - perpX;
+		leftFrom.y = y1 - perpY;
+		leftTo.x = x2 - perpX;
+		leftTo.y = y2 -perpY;
 	}
-	if(checkPointPositionDirected(x1, y1, x2, y2, rightTo.x, rightTo.y) === -1) {
+	if(checkPointPositionDirected(x1, y1, x2, y2, rightTo.x, rightTo.y) === 1) {
 		let tempX = rightTo.x;
 		let tempY = rightTo.y;
 		rightTo.x = leftTo.x;
@@ -99,10 +111,6 @@ function parallels(p1, p2, offset) {
 		leftFrom.x = tempX;
 		leftFrom.y = tempY;
 	}
-	console.log('rightFrom:');
-	console.log(rightFrom);
-	console.log('rightTo:');
-	console.log(rightTo);
 	if( rightPoints.length > 0 ) {
 
 		const modLine = rightPoints[rightPoints.length - 1];
@@ -132,13 +140,14 @@ function parallels(p1, p2, offset) {
 	}
 }
 function getParallels(points, distance) {
+	const rightPoints = [];
+	const leftPoints = [];
 	points.forEach((point, i) => {
 		if(i > 0) {
-			parallels(points[i - 1], point, distance);
+			parallels(points[i - 1], point, distance, leftPoints, rightPoints);
 		}
 	});
-
 	return { l: leftPoints, r: rightPoints };
 }
-module.exports = { getParallels, findIntersection }
+module.exports = { getParallels, findIntersection, parallels, checkPointPositionDirected }
 
