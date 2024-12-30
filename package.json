@@ -1,6 +1,6 @@
 {
   "name": "parallel-lines",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Draw parallel lines a distance from an array of connected lines",
   "main": "index.js",
   "scripts": {
