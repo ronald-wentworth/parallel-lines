@@ -19,13 +19,13 @@ console.log('const parallel = ');
 const lines = parallelLines.getParallels(points, 5);
 console.log(lines);
 console.log(';\n');
-const line1 = [ 5, 63.301270189221924, 12.679491924311229, 78.66025403784438 ];
-const line2 = [ 7.5, 77.5, 17.5, 107.5 ];
 const intersection = parallelLines.findIntersection(line1, line2);
-
+console.log(intersection);
 const leftPoints = [];
 const rightPoints = [];
 const lines1 = [  { x: 20, y: 50 },
   { x: 30, y: 70 } ];
 const parallels1 = parallelLines.parallels(lines1[0], lines1[1], 15, leftPoints, rightPoints);
+console.log(leftPoints);
+console.log(rightPoints);
 
