@@ -1,8 +1,5 @@
 //index.js
 
-
-
-
 function findIntersection(line1, line2) {
 	const [x1, y1, x2, y2] = line1;
 	const [x3, y3, x4, y4] = line2;
@@ -31,8 +28,7 @@ function findIntersection(line1, line2) {
     	return { x: intersectX, y: y2 };
     }
 	const denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-	if (denominator === 0) { 
-	// The lines are parallel or coincident 
+	if (denominator === 0) { // The lines are parallel or coincident 
 		return null;
 	}
 	const intersectX = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denominator;

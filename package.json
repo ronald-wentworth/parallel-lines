@@ -1,6 +1,6 @@
 {
   "name": "parallel-lines",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Draw parallel lines a distance from an array of connected lines",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,10 @@
     "graph",
     "chart",
     "lines",
-    "parallel"
+    "parallel",
+    "outliers",
+    "statistics"
+
   ],
   "author": "Ronald Wentworth",
   "license": "ISC"
